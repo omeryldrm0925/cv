@@ -25,7 +25,8 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-  const origin = headers().get('origin')
+  const headersList = headers()
+  const origin = headersList.get('origin')
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const supabase = createClient()
@@ -65,7 +66,7 @@ export async function updateCv(cvData: any) {
         id: user.id,
         cv_data: cvData,
         updated_at: new Date().toISOString()
-    }]);
+    }] as any);
 
     if (error) {
         console.error('Error updating CV:', error);
