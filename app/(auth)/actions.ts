@@ -61,11 +61,11 @@ export async function updateCv(cvData: any) {
         throw new Error('User not authenticated');
     }
 
-    const { error } = await supabase.from('cvs').upsert({
+    const { error } = await supabase.from('cvs').upsert([{
         id: user.id,
         cv_data: cvData,
         updated_at: new Date().toISOString()
-    });
+    }]);
 
     if (error) {
         console.error('Error updating CV:', error);
