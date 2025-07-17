@@ -108,9 +108,15 @@ const MainMenu = ({ onSectionClick }: { onSectionClick: (id: string) => void }) 
     );
 };
 
+type FormDataType = {
+    id?: number;
+    description?: string | string[];
+    [key: string]: any;
+};
+
 const AddOrEditItemModal = ({ sectionId, item, onSave, onClose }: { sectionId: string, item: any, onSave: (sectionId: string, item: any) => void, onClose: () => void }) => {
     const isNew = !item || !item.id;
-    const [formData, setFormData] = useState(isNew ? { description: [] } : { ...item });
+    const [formData, setFormData] = useState<FormDataType>(isNew ? { description: [] } : { ...item });
     const [descType, setDescType] = useState(isNew || Array.isArray(item?.description) ? 'list' : 'paragraph');
     const [newListItemText, setNewListItemText] = useState('');
 
@@ -139,7 +145,7 @@ const AddOrEditItemModal = ({ sectionId, item, onSave, onClose }: { sectionId: s
     
     const handleAddListItem = () => {
         if (newListItemText.trim() === '') return;
-        setFormData(prev => ({ ...prev, description: [...(prev.description || []), newListItemText] }));
+        setFormData(prev => ({ ...prev, description: [...(Array.isArray(prev.description) ? prev.description : []), newListItemText] }));
         setNewListItemText('');
     };
 
@@ -151,7 +157,7 @@ const AddOrEditItemModal = ({ sectionId, item, onSave, onClose }: { sectionId: s
     };
 
     const handleDeleteListItem = (indexToDelete: number) => {
-        setFormData(prev => ({ ...prev, description: (prev.description || []).filter((_: any, index: number) => index !== indexToDelete) }));
+        setFormData(prev => ({ ...prev, description: (Array.isArray(prev.description) ? prev.description : []).filter((_: any, index: number) => index !== indexToDelete) }));
     };
     
     const handleDragStart = (e: React.DragEvent<HTMLLIElement>, position: number) => {
@@ -165,7 +171,7 @@ const AddOrEditItemModal = ({ sectionId, item, onSave, onClose }: { sectionId: s
 
     const handleDrop = (e: React.DragEvent<HTMLLIElement>) => {
         e.currentTarget.classList.remove('dragging');
-        if (dragItem.current === null || dragOverItem.current === null) return;
+        if (dragItem.current === null || dragOverItem.current === null || !Array.isArray(formData.description)) return;
 
         const newList = [...formData.description];
         const dragItemContent = newList[dragItem.current];
@@ -205,7 +211,7 @@ const AddOrEditItemModal = ({ sectionId, item, onSave, onClose }: { sectionId: s
                                     <button type="button" className="btn-add-item" onClick={handleAddListItem}>Add</button>
                                 </div>
                                 <ul className="draggable-list">
-                                    {(formData.description || []).map((listItem: string, index: number) => (
+                                    {(Array.isArray(formData.description) ? formData.description : []).map((listItem: string, index: number) => (
                                         <li 
                                             key={index} 
                                             className="draggable-item"
