@@ -111,7 +111,20 @@ const MainMenu = ({ onSectionClick }: { onSectionClick: (id: string) => void }) 
 type FormDataType = {
     id?: number;
     description?: string | string[];
-    [key: string]: any;
+    title?: string;
+    degree?: string;
+    company?: string;
+    school?: string;
+    startDate?: string;
+    endDate?: string;
+    ongoing?: boolean;
+    name?: string;
+    icon?: string;
+    level?: number | string;
+    email?: string;
+    phone?: string;
+    type?: string;
+    value?: string;
 };
 
 const AddOrEditItemModal = ({ sectionId, item, onSave, onClose }: { sectionId: string, item: any, onSave: (sectionId: string, item: any) => void, onClose: () => void }) => {
@@ -124,8 +137,9 @@ const AddOrEditItemModal = ({ sectionId, item, onSave, onClose }: { sectionId: s
     const dragOverItem = useRef<number | null>(null);
     
     useEffect(() => {
-        if (typeof formData.description === 'string' && descType === 'list') {
-            setFormData(prev => ({ ...prev, description: [prev.description].filter(Boolean)}));
+        const currentDescription = formData.description;
+        if (typeof currentDescription === 'string' && descType === 'list') {
+            setFormData(prev => ({ ...prev, description: [currentDescription] }));
         }
     }, [formData.description, descType]);
 
@@ -241,18 +255,18 @@ const AddOrEditItemModal = ({ sectionId, item, onSave, onClose }: { sectionId: s
             case 'skills':
                 return <>
                     <div className="form-group"><label>Skill Name</label><input type="text" name="name" value={formData.name || ''} onChange={handleInput} /></div>
-                    <div className="form-group"><label>Icon</label><IconPicker selected={formData.icon} onChange={(icon) => handleInput({ target: { name: 'icon', value: icon } } as any)} /></div>
-                    <div className="form-group"><label>Level</label><StarRating level={formData.level || 0} onRate={handleStarRating} isInteractive={true} /></div>
+                    <div className="form-group"><label>Icon</label><IconPicker selected={formData.icon || ''} onChange={(icon) => handleInput({ target: { name: 'icon', value: icon } } as any)} /></div>
+                    <div className="form-group"><label>Level</label><StarRating level={typeof formData.level === 'number' ? formData.level : 0} onRate={handleStarRating} isInteractive={true} /></div>
                 </>;
             case 'interests':
                  return <>
                     <div className="form-group"><label>Interest Name</label><input type="text" name="name" value={formData.name || ''} onChange={handleInput} /></div>
-                    <div className="form-group"><label>Icon</label><IconPicker selected={formData.icon} onChange={(icon) => handleInput({ target: { name: 'icon', value: icon } } as any)} /></div>
+                    <div className="form-group"><label>Icon</label><IconPicker selected={formData.icon || ''} onChange={(icon) => handleInput({ target: { name: 'icon', value: icon } } as any)} /></div>
                 </>;
             case 'languages':
                 return <>
                     <div className="form-group"><label>Language</label><input type="text" name="name" value={formData.name || ''} onChange={handleInput} /></div>
-                    <div className="form-group"><label>Level</label><select name="level" value={formData.level || 'Beginner'} onChange={handleInput}>{languageLevels.map(l => <option value={l} key={l}>{l}</option>)}</select></div>
+                    <div className="form-group"><label>Level</label><select name="level" value={String(formData.level) || 'Beginner'} onChange={handleInput}>{languageLevels.map(l => <option value={l} key={l}>{l}</option>)}</select></div>
                 </>;
             case 'references':
                 return <>
@@ -265,7 +279,7 @@ const AddOrEditItemModal = ({ sectionId, item, onSave, onClose }: { sectionId: s
                 return <>
                     <div className="form-group"><label>Type (e.g., Email, LinkedIn)</label><input type="text" name="type" value={formData.type || ''} onChange={handleInput} /></div>
                     <div className="form-group"><label>Value (e.g., your@email.com)</label><input type="text" name="value" value={formData.value || ''} onChange={handleInput} /></div>
-                    <div className="form-group"><label>Icon</label><IconPicker selected={formData.icon} onChange={(icon) => handleInput({ target: { name: 'icon', value: icon } } as any)} /></div>
+                    <div className="form-group"><label>Icon</label><IconPicker selected={formData.icon || ''} onChange={(icon) => handleInput({ target: { name: 'icon', value: icon } } as any)} /></div>
                 </>;
             default: return null;
         }
