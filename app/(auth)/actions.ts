@@ -2,7 +2,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { headers, type ReadonlyHeaders } from 'next/headers'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
@@ -25,7 +25,7 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-  const origin = (headers() as ReadonlyHeaders).get('origin')
+  const origin = headers().get('origin')
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const supabase = createClient()
@@ -61,11 +61,11 @@ export async function updateCv(cvData: any) {
         throw new Error('User not authenticated');
     }
 
-    const { error } = await supabase.from('cvs').upsert([{
+    const { error } = await supabase.from('cvs').upsert({
         id: user.id,
         cv_data: cvData,
         updated_at: new Date().toISOString()
-    }]);
+    });
 
     if (error) {
         console.error('Error updating CV:', error);
