@@ -2,16 +2,14 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { headers } from 'next/headers'
+import { headers, type ReadonlyHeaders } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
 export async function login(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createClient()
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -27,11 +25,10 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-  const origin = headers().get('origin')
+  const origin = (headers() as ReadonlyHeaders).get('origin')
   const email = formData.get('email') as string
   const password = formData.get('password') as string
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createClient()
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -50,15 +47,13 @@ export async function signup(formData: FormData) {
 }
 
 export async function logout() {
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const supabase = createClient()
     await supabase.auth.signOut()
     return redirect('/')
 }
 
 export async function updateCv(cvData: any) {
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
+    const supabase = createClient();
 
     const { data: { user } } = await supabase.auth.getUser();
 
